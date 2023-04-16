@@ -1,0 +1,64 @@
+version: '3.3'
+
+# Docker Compose - Description
+# pinger: script that calls various endpoints from api service every n
+# api: nodejs express backend that holds all the business logic of scaping
+# db: pre-configured mysql database that will persist data
+
+services:
+  pinger:
+    container_name: job-runner-pinger
+    restart: always
+    build:
+      context: ./pinger
+      dockerfile: Dockerfile
+    networks:
+      - job-runner-network
+    env_file:
+      - ./pinger.env
+    depends_on:
+      db:
+        condition: service_started
+
+  api:
+    container_name: job-runner-api
+    #restart: always
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile
+    ports:
+      - 1028:8000
+    env_file: 
+      - ./backend.env
+    networks:
+      job-runner-network:
+        aliases:
+          - docker-compose-api
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    container_name: job-runner-db
+    image: hsheth2/mysql-low-memory
+    hostname: job-runner-db
+    #restart: always
+    env_file: 
+      - ./db.env
+    networks:
+      job-runner-network:
+        aliases:
+          - docker-compose-db
+    volumes:
+        - ./db/my.cnf:/etc/my.cnf
+        - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+        - ./db/mysql:/var/lib/mysql:rw
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 10
+    ports:
+        - 1030:3306
+
+networks:
+  job-runner-network:
