@@ -19,6 +19,8 @@ services:
     depends_on:
       db:
         condition: service_started
+    # profiles:
+    #   - donotstart
 
   api:
     container_name: job-runner-api
@@ -40,7 +42,7 @@ services:
 
   db:
     container_name: job-runner-db
-    image: hsheth2/mysql-low-memory
+    image: hsheth2/mysql-low-memory # or arm64v8/mysql
     hostname: job-runner-db
     #restart: always
     env_file: 

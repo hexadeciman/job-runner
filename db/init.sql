@@ -18,16 +18,21 @@ CREATE TABLE t_search (
 CREATE TABLE t_match
 (
   `id` int(20) NOT NULL auto_increment,
-  `fk_search` int,
-  `price` int,
-  `coordinates` varchar(100),
   `timestamp` timestamp default CURRENT_TIMESTAMP,
-  `link` varchar(400),
+  `add_id` bigint,
+  `date_created` varchar(100),
+  `address` varchar(400),
+  `coordinates` varchar(100),
+  `price` int,
   `photos` longtext,
   `description` longtext,
   `contact` varchar(100),
+  `fk_search` int,
+  `link` varchar(400),
   PRIMARY KEY (id)
 );
+
+ALTER TABLE t_match ADD UNIQUE (`add_id`);
 
 CREATE TABLE t_ping
 (

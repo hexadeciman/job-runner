@@ -1,11 +1,9 @@
-
- 
-
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { APP_PORT } from "./config/app";
 import { botGroupPhotoTest, botMessageTest, botPhotoTest, addRowToSearch } from "./routes";
+import { pingPlatform1 } from "./routes/platform1";
 
 // Express Setup
 const app = express();
@@ -17,7 +15,9 @@ app.use(express.urlencoded({ extended: true }));
 // entry point for curl + cron job
 app.get("/ping", async (req, res) => {
   const platform = req.query.platform;
-  console.log(platform);
+  if ( platform === "1" ) {
+    const data = await pingPlatform1();
+  }
   res.json(platform);
 });
 

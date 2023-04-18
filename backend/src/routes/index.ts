@@ -7,7 +7,6 @@ const randomImages = ["https://picsum.photos/id/237/200/300", "https://picsum.ph
 
 export const addRowToSearch = async () => {
     const { data: searches }: any = await queryDB(fetchSearchesQuery);
-    console.log(searches);
 
     const values = {
         search_query: "3phmgt",

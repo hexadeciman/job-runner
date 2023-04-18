@@ -13,9 +13,15 @@ async function execute(sql, params) {
 
 export async function executeMultiple(sql, values) {
   const connection = await mysql.createConnection(dbConfig);
-  const [results] = await connection.query(sql, [values]);
-  connection.end();
-  return results;
+  try {
+    const data = await connection.query(sql, [values]);
+    const [results] = data;
+    connection.end();
+    return results;
+  } catch(e) {
+    console.log("err", e)
+    return false;
+  }
 }
 
 export async function queryDB(querystr, params = []) {
