@@ -109,5 +109,5 @@ dist
 
 # mysql db local persist data
 mysql/
-
+platform1.ts
 config1.ts
