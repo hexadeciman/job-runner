@@ -42,11 +42,7 @@ services:
 
   db:
     container_name: job-runner-db
-<<<<<<< HEAD
-    image: hsheth2/mysql-low-memory # or arm64v8/mysql
-=======
-    image: arm64v8/mysql
->>>>>>> 831bc41 (Add code for project MPV)
+    image: arm64v8/mysql #hsheth2/mysql-low-memory # or arm64v8/mysql
     hostname: job-runner-db
     #restart: always
     env_file: 
