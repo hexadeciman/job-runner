@@ -5,19 +5,14 @@ const bot = new TelegramBot(telegramConfig.token);
 const { DateTime } = require("luxon");
 import { setTimeout } from "timers/promises";
 
-const getHomeMessage = (address, price, description, link) => {
-  return `
-    <code>
-        <b>New find !</b>
-        ---
-        ${address}
-        ---
-        📅 ${DateTime.now().toFormat("yyyy LLL dd h:MM:ss")}
-        🤖 Home Finder
-    </code>
-    👉🏽 ${link}
-  `;
-};
+const getHomeMessage = (address, price, description, link) => `
+${address.replaceAll("'", "")}
+💵 CHF ${price}.-
+👉🏽 ${link}
+<code>
+  📅 ${DateTime.now().toFormat("yyyy LLL dd h:MM:ss")}
+  🤖 Home Finder
+</code>`;
 const getTelegramMessage = (message = "Test message") => {
   return `
     <code>

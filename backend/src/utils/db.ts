@@ -6,9 +6,14 @@ const emptyOrRows = (rows) => (!rows ? [] : rows);
 
 async function execute(sql, params) {
   const connection = await mysql.createConnection(dbConfig);
-  const [results] = await connection.execute(sql, params);
-  connection.end();
-  return results;
+  try {
+    const [results] = await connection.execute(sql, params);
+    connection.end();
+    return results;
+  } catch(e) {
+    console.log("err", e)
+    return false;
+  }
 }
 
 export async function executeMultiple(sql, values) {
