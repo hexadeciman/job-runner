@@ -7,7 +7,6 @@ import { setTimeout } from "timers/promises";
 
 const getHomeMessage = (address, price, description, link) => `
 ${address.replaceAll("'", "")}
-💵 CHF ${price}.-
 👉🏽 ${link}
 <code>
   📅 ${DateTime.now().toFormat("yyyy LLL dd h:MM:ss")}
