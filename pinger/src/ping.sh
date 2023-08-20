@@ -9,5 +9,5 @@ while true; do
         curl -s --max-time 45 $url
         sleep 2
     done
-    sleep 60
+    sleep 120
 done

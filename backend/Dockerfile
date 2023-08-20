@@ -1,9 +1,12 @@
-FROM node:alpine
+FROM node:current-alpine
 
+RUN apk add chromium
+
+# skips puppeteer installing chrome and points to correct binary
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+    
 WORKDIR /usr/src/app
-
-RUN apk --no-cache add curl
-RUN apk add --no-cache bash
 
 COPY package.json .
 COPY package-lock.json .

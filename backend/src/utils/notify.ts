@@ -1,12 +1,14 @@
 import { telegramConfig } from "../config/telegram";
+import { queryDB } from "./db";
+import { lastNRowsQuery } from "../queries/lastNRows";
 
 const TelegramBot = require("node-telegram-bot-api");
 const bot = new TelegramBot(telegramConfig.token);
 const { DateTime } = require("luxon");
 import { setTimeout } from "timers/promises";
 
-const getHomeMessage = (address, price, description, link) => `
-${address.replaceAll("'", "")}
+const getHomeMessage = (address, price, description, link, fk_search) => `
+${fk_search === 0 ? address.replaceAll("'", "") : description}
 👉🏽 ${link}
 <code>
   📅 ${DateTime.now().toFormat("yyyy LLL dd h:MM:ss")}
@@ -40,7 +42,7 @@ export const sendPhotos = async (urls: string[]) => {
 
 export const sendMessages = async (match) => {
   try{
-    const res = await bot.sendMessage(telegramConfig.chatId, getHomeMessage(match.address, match.price, match.description, match.link), {
+    await bot.sendMessage(telegramConfig.chatId, getHomeMessage(match.address, match.price, match.description, match.link, match.fk_search), {
       parse_mode: "HTML",
     });
     if(match.photos) {
@@ -83,3 +85,10 @@ export const sendMessage = async () => {
 
   return true;
 };
+
+export const notifyLastNRows = async (count) => {
+  // find new matches and send notifications
+  const { data: newMatches }: any = await queryDB(lastNRowsQuery, [`${count}`]);
+  await notifyServices(newMatches);
+}
+  

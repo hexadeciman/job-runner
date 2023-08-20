@@ -18,12 +18,13 @@ services:
       - ./pinger.env
     depends_on:
       db:
-        condition: service_started
+        condition: service_healthy
     # profiles:
     #   - donotstart
 
   api:
     container_name: job-runner-api
+    platform: linux/arm64 
     #restart: always
     build:
       context: ./backend/
