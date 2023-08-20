@@ -4,6 +4,7 @@ import { notifyLastNRows } from '../utils/notify';
 import { getPriceFromString } from '../helpers/getPriceFromString';
 import { getPuppeteerPage } from '../utils/puppeteer';
 import { hashObject } from '../helpers/hashObject';
+import { delay } from '../helpers/delay';
 
 async function getRentalInfo(url, page) {
     await page.goto(url);
@@ -72,6 +73,7 @@ async function getRentalInfo(url, page) {
 
 async function getLinks(page) {
     await page.goto('https://www.bory.ch/en/rentals?types=APP&roomsMin=4&roomsMax=5&first=20&after=&last=&before=');
+    await delay(4000);
     const urls = await page.evaluate(() => {
         let uniqueLinks = new Set();
         let allAnchors = Array.from(document.querySelectorAll('a'));
