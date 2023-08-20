@@ -18,13 +18,12 @@ services:
       - ./pinger.env
     depends_on:
       db:
-        condition: service_healthy
-    # profiles:
+        condition: service_started
+        # profiles:
     #   - donotstart
 
   api:
     container_name: job-runner-api
-    platform: linux/arm64 
     #restart: always
     build:
       context: ./backend/
@@ -43,7 +42,7 @@ services:
 
   db:
     container_name: job-runner-db
-    image: arm64v8/mysql #hsheth2/mysql-low-memory # or arm64v8/mysql
+    image: arm64v8/mysql
     hostname: job-runner-db
     #restart: always
     env_file: 
