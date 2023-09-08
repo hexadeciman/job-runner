@@ -5,8 +5,22 @@ import { getPriceFromString } from '../helpers/getPriceFromString';
 import { getPuppeteerPage } from '../utils/puppeteer';
 import { hashObject } from '../helpers/hashObject';
 import { delay } from '../helpers/delay';
+import { PrismaClient } from '@prisma/client'
+const prisma = new PrismaClient()
 
-async function getRentalInfo(page, url) {
+export type RentalInfo = {
+    add_id: number;
+    date_created: string;
+    address: any;
+    coordinates: string;
+    price: number;
+    photos: any;
+    description: string;
+    contact: string;
+    link: any;
+}
+
+async function getRentalInfo(page, url): Promise<RentalInfo> {
     await page.goto(url);
 
     // Wait for the elements to be visible
@@ -97,20 +111,49 @@ async function getLinks(page, url) {
     return urls;
 };
 
+const filterFn = async (result: RentalInfo): Promise<boolean> => {
+    const allmatches = await prisma.t_match.findMany({
+        where: {
+            link: {
+                startsWith: 'https://www.naef.ch'
+            },
+            photos: {
+                contains: result.photos
+            }
+        }
+    })
+    return allmatches.length === 0;
+}
+
+const filterAsync = async (list, asyncFilter) => {
+    const filteredList = [];
+
+    for (const item of list) {
+        const shouldInclude = await asyncFilter(item);
+        if (shouldInclude) {
+            filteredList.push(item);
+        }
+    }
+    return filteredList;
+};
+
 export const pingPlatform3 = async () => {
     console.log("pinging https://www.naef.ch/");
+    
     const { page, browser } = await getPuppeteerPage();
 
     const urls = await getLinks(page, "https://www.naef.ch/louer/appartements/geneve/geneve-ville/?nbPieces=4&budgetMax=3100&sortingField=recent&zoom=14");
-    const rentalInfos = [];
+    const rentalInfos: RentalInfo[] = [];
     for (const url of urls) {
         await delay(200);
         const rentalInfo = await getRentalInfo(page, url)
         rentalInfos.push(rentalInfo);
     }
-
-    const count = await insertMatches(rentalInfos);
+    const filteredRentalInfos = await filterAsync(rentalInfos, filterFn);
+    const count = await insertMatches(filteredRentalInfos);
     await notifyLastNRows(count);
     await browser.close();
     console.log(`p3 Matches found: ${count}`);
+
+    await prisma.$disconnect()
 }

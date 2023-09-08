@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model t_match {
+  id           Int       @id @default(autoincrement())
+  timestamp    DateTime? @default(now()) @db.Timestamp(0)
+  add_id       BigInt?   @unique(map: "unique_add_id")
+  date_created String?   @db.VarChar(100)
+  address      String?   @db.VarChar(400)
+  coordinates  String?   @db.VarChar(100)
+  price        Int?
+  photos       String?   @db.LongText
+  description  String?   @db.LongText
+  contact      String?   @db.VarChar(100)
+  fk_search    Int?
+  link         String?   @db.VarChar(400)
+}
+
+model t_ping {
+  id           Int       @id @default(autoincrement())
+  fk_search_id Int?      @unique(map: "fk_search_id")
+  count        Int?      @default(0)
+  timestamp    DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model t_search {
+  id                Int       @id @default(autoincrement())
+  search_query      String?   @default("") @db.VarChar(500)
+  description       String?   @db.VarChar(100)
+  included_keywords String?   @db.VarChar(255)
+  excluded_keywords String?   @db.VarChar(255)
+  platform          String?   @db.VarChar(50)
+  date_created      DateTime? @default(now()) @db.Timestamp(0)
+  archived          Int       @default(0)
+}
