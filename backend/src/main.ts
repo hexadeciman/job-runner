@@ -6,6 +6,7 @@ import { botGroupPhotoTest, botMessageTest, botPhotoTest, addRowToSearch } from 
 import { pingPlatform1 } from "./routes/platform1";
 import { pingPlatform2 } from "./routes/platform2";
 import { pingPlatform3 } from "./routes/platform3";
+import { pingPlatform4 } from "./routes/platform4";
 
 // Express Setup
 const app = express();
@@ -25,6 +26,9 @@ app.get("/ping", async (req, res) => {
   }
   if ( platform === "3" ) {
     const data = await pingPlatform3();
+  }
+  if ( platform === "4" ) {
+    const data = await pingPlatform4();
   }
   res.json(platform);
 });

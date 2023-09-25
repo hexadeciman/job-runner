@@ -1,8 +1,6 @@
 import axios from "axios";
 import { platform1Config } from "./paltformsConfigs/config1";
-import { insertValues, queryDB } from "../utils/db";
-import { insertMatchesQuery } from "../queries/insertMatches";
-import { escape } from 'sqlstring';
+import { insertMatches, queryDB } from "../utils/db";
 import { lastNRowsQuery } from "../queries/lastNRows";
 import { notifyServices } from "../utils/notify";
 import { includedExcludedListQuery } from "../queries/includedExcludedListQuery";
@@ -22,14 +20,7 @@ export const pingPlatform1 = async () => {
             excluded_keywords = incl_excl_list[0].excluded_keywords ?? "";
         }
         const results = processResult(data, included_keywords, excluded_keywords);
-        const matches = results.reduce(
-            (acc, { add_id, date_created, address, coordinates, price, photos, description, contact, link }) =>  [...acc, [add_id, date_created, escape(address), coordinates, price, photos, escape(description), contact, 0, link]]
-        , []);
-        const { data: insertRes }: any = await insertValues(
-            insertMatchesQuery,
-            matches
-        );
-        const matchesCount = insertRes.affectedRows
+        const matchesCount = await insertMatches(results);
         // find new matches and send notifications
         const { data: newMatches }: any = await queryDB(lastNRowsQuery, [`${matchesCount}`]);
         await notifyServices(newMatches);

@@ -5,8 +5,7 @@ import { getPriceFromString } from '../helpers/getPriceFromString';
 import { getPuppeteerPage } from '../utils/puppeteer';
 import { hashObject } from '../helpers/hashObject';
 import { delay } from '../helpers/delay';
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+import { prisma } from '../utils/prisma';
 
 export type RentalInfo = {
     add_id: number;

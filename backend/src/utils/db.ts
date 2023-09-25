@@ -1,5 +1,6 @@
 import { insertMatchesQuery } from "../queries/insertMatches";
 import { dbConfig } from "../config/db";
+import { prisma } from "./prisma";
 
 const mysql = require("mysql2/promise");
 
@@ -47,12 +48,11 @@ export async function insertValues(querystr, params = []) {
 }
 
 export async function insertMatches(data) {
-    const matches = data.reduce(
-        (acc, { add_id, date_created, address, coordinates, price, photos, description, contact, link }) =>  [...acc, [add_id, date_created, address, coordinates, price, photos, description, contact, 1, link]]
-    , []);
-    const { data: insertRes }: any = await insertValues(
-        insertMatchesQuery,
-        matches
-    );
-    return insertRes.affectedRows
+  console.log("inserting:", data.length);
+  const createMany = await prisma.t_match.createMany({
+    data,
+    skipDuplicates: true, // Skip 'Bobo'
+  });
+  console.log("inserted:", JSON.stringify(createMany));
+  return createMany.count;
 }
